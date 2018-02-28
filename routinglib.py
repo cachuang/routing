@@ -22,6 +22,11 @@ class RoutedHost(Host):
     def config(self, **kwargs):
         Host.config(self, **kwargs)
 
+        for off in ["rx", "tx", "sg"]:
+            cmd = "/sbin/ethtool --offload %s %s off" \
+                  % (self.defaultIntf(), off)
+            self.cmd(cmd)
+
         self.cmd('ip -4 addr flush dev %s' % self.defaultIntf())
         for ip in self.ips:
             self.cmd('ip addr add %s dev %s' % (ip, self.defaultIntf()))
